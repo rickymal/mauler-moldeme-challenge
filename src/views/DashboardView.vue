@@ -1,0 +1,9 @@
+<script setup lang="ts">
+  import ListBox from '../components/ListBox.vue'
+</script>
+
+<template>
+  <main>
+    <ListBox/>
+  </main>
+</template>

@@ -1,86 +1,95 @@
 <script setup lang="ts">
+  import axios from 'axios'
+  import { ref } from 'vue';
+  import { useRoute } from 'vue-router';
+  import { onMounted } from 'vue';
+  
+  const route = useRoute()
+  let page = 1
+  let limit = 2
+  let pages_info = new Map<string, number>()
+  let pages_cache = new Map<number, {id : number, x : number, y : number, created_at : string, updated_at : string}>()
+  let coordinates = ref({ data: [] });
 
+  const deleteCoords = async () => {}
+
+  const paginate_location = async (paginate : number) => {
+    page += paginate
+    if(page < 1) {
+      page = 1
+      return
+    }
+    
+    // casting necessário porque o typescript não enxerga que só será obtido o pages caso exista devido ao 'if'
+    if(pages_info.get('pages') && page > (pages_info.get('pages') as number)) {
+
+      page = pages_info.get('pages') || Number.POSITIVE_INFINITY
+      return
+    }
+
+    const response = await axios.get('https://recrutamento.molde.me/location', {
+      headers : {
+        Authorization: route.query.auth as string
+      },
+      params : { limit, page }
+    })
+
+    pages_info.set('pages', response.data.pages)
+    coordinates.value = response.data.data
+  }
+
+  onMounted(async () => {
+    await paginate_location(0);
+  });
 </script>
 
 <template>
-  <ul role="list" class="divide-y divide-gray-100">
-    <li v-for="person in people" :key="person.email" class="flex justify-between gap-x-6 py-5">
-      <div class="flex gap-x-4">
-        <img class="h-12 w-12 flex-none rounded-full bg-gray-50" :src="person.imageUrl" alt="" />
-        <div class="min-w-0 flex-auto">
-          <p class="text-sm font-semibold leading-6 text-gray-900">{{ person.name }}</p>
-          <p class="mt-1 truncate text-xs leading-5 text-gray-500">{{ person.email }}</p>
+  <div class="flex flex-col justify-center">
+    <ul v-if="coordinates" role='list' class="divide-y divide-gray-100">
+      <li v-for="coordinate in coordinates" :key="coordinate.id" class="flex justify-between gap-x-6 py-5">
+        <div class = 'flex justify-left'>
+          <h2>(x: {{ coordinate.x }}, y: {{ coordinate.y }})</h2>
         </div>
-      </div>
-      <div class="hidden sm:flex sm:flex-col sm:items-end">
-        <p class="text-sm leading-6 text-gray-900">{{ person.role }}</p>
-        <p v-if="person.lastSeen" class="mt-1 text-xs leading-5 text-gray-500">
-          Last seen <time :datetime="person.lastSeenDateTime">{{ person.lastSeen }}</time>
-        </p>
-        <div v-else class="mt-1 flex items-center gap-x-1.5">
-          <div class="flex-none rounded-full bg-emerald-500/20 p-1">
-            <div class="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-          </div>
-          <p class="text-xs leading-5 text-gray-500">Online</p>
+        <div class = 'flex justify-right'>
+          <button class="bg-blue-500 rounded px-2 py-4 text-white" @click="() => deleteCoords(coordinate.id)">
+            Apagar coordenada
+          </button>
         </div>
-      </div>
-    </li>
-  </ul>
-</template>
+      </li>
+    </ul>
+    <div class="flex justify-center">
+      <button :disabled="page === 1" @click="() => paginate_location(-1)" class="bg-blue-500 text-white py-2 px-4 rounded mr-2">Página anterior</button>
+      <button :disabled="page === pages_info.get('page')" @click="() => paginate_location(1)" class="bg-blue-500 text-white py-2 px-4 rounded ml-2">Próxima página</button>
+    </div>
+  </div>
 
-<script setup>
-  const people = [
-    {
-      name: 'Leslie Alexander',
-      email: 'leslie.alexander@example.com',
-      role: 'Co-Founder / CEO',
-      imageUrl:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      lastSeen: '3h ago',
-      lastSeenDateTime: '2023-01-23T13:23Z',
-    },
-    {
-      name: 'Michael Foster',
-      email: 'michael.foster@example.com',
-      role: 'Co-Founder / CTO',
-      imageUrl:
-        'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      lastSeen: '3h ago',
-      lastSeenDateTime: '2023-01-23T13:23Z',
-    },
-    {
-      name: 'Dries Vincent',
-      email: 'dries.vincent@example.com',
-      role: 'Business Relations',
-      imageUrl:
-        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      lastSeen: null,
-    },
-    {
-      name: 'Lindsay Walton',
-      email: 'lindsay.walton@example.com',
-      role: 'Front-end Developer',
-      imageUrl:
-        'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      lastSeen: '3h ago',
-      lastSeenDateTime: '2023-01-23T13:23Z',
-    },
-    {
-      name: 'Courtney Henry',
-      email: 'courtney.henry@example.com',
-      role: 'Designer',
-      imageUrl:
-        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      lastSeen: '3h ago',
-      lastSeenDateTime: '2023-01-23T13:23Z',
-    },
-    {
-      name: 'Tom Cook',
-      email: 'tom.cook@example.com',
-      role: 'Director of Product',
-      imageUrl:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      lastSeen: null,
-    },
-  ]
-</script>
+  <div class = 'flex justify-center'>
+    <form @submit="submitCoordinates" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+          eixo 'x'
+        </label>
+        <input v-model="x_coords" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" name="uname" placeholder="" required>
+      </div>
+        
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+          eixo 'y'
+        </label>
+        <input v-model="y_coords" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" name="uname" placeholder="" required>
+      </div>
+    
+      <div v-if="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline">{{ errorMessage }}</span>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <RouterView to="/">
+          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+              Inserir
+          </button>
+        </RouterView>
+      </div>
+    </form>
+  </div>
+</template>

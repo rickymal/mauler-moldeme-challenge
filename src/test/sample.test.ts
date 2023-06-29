@@ -4,6 +4,6 @@ export function sampleFunction(x: number, y: number): number {
   }
 
 test('adds 1 + 2 to equal 3', () => {
-expect(sampleFunction(1, 2)).toBe(3);
+  expect(sampleFunction(1, 2)).toBe(3);
 });
   
