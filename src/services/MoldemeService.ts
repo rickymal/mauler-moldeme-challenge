@@ -17,4 +17,28 @@ export default class MoldemeService implements IApiService {
     })
   }
 
+  async delete_coordinates(auth : string, id : string) : Promise<{ status: number, data: any; }> {
+    return await axios.delete(`https://recrutamento.molde.me/location/${id}`, {
+      headers : {
+        Authorization: auth
+      }
+    })
+  }
+
+  async add_coordinates(auth : string, x_axis : number, y_axis : number) {
+    return await axios.post('https://recrutamento.molde.me/location', { x: x_axis, y: y_axis }, {
+      headers : {
+        Authorization: auth
+      }
+    });
+  }
+
+  async get_coordinates_by_page(auth : string, page : number, limit : number) {
+    return await axios.get('https://recrutamento.molde.me/location', {
+      headers : {
+        Authorization: auth
+      },
+      params : { limit, page }
+    })
+  }
 }

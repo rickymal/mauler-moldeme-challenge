@@ -1,8 +1,10 @@
 <script setup lang="ts">
-  import axios from 'axios'
   import { ref, type Ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { onMounted } from 'vue';
+
+  import MoldemeService from '@/services/MoldemeService';
+  import DashboardController from '../controllers/DashboardController'
 
   const x_coords : Ref<number> = ref(0)
   const y_coords : Ref<number> = ref(0)
@@ -10,49 +12,48 @@
   let successMessage = ref("")
   let coordsMessage = ref("")
   const route = useRoute()
+  const auth = route.query.auth
   const router = useRouter()
+  
+  const get_coordinates = () => {
+    return {
+      x: x_coords.value,
+      y: y_coords.value,
+    }
+  }
+
+  const redirectPage = async (name = 'login', next = 'dashboard') => {
+    router.replace({ name, query : { next }})
+  }
+
+  const onUpdateCoordsFailed = (reason, coords) => {
+    coordsMessage.value = "Coordenadas devem ser entre 0 e 1000"
+  }
+
+  const onCoordsUpdated = (coords) => {
+    console.log({ucoords : coords})
+    coordsMessage.value = ""
+    const lastMesssage = successMessage.value
+    successMessage.value = `Coordenada (${coords.x_axis}, ${coords.y_axis}) cadastrada!`
+    x_coords.value = 0
+    y_coords.value = 0
+
+    setTimeout(() => {
+      successMessage.value = lastMesssage
+    }, 5000)
+  }
+
+
+  const apiService = new MoldemeService()
+  const dashboardController = new DashboardController(apiService, auth, {onCoordsUpdated, get_coordinates, redirectPage, onUpdateCoordsFailed})
+
   onMounted(() => {
     successMessage.value = "Insira os valores de 'x' e 'y'"
   })
 
   const submitCoordinates = async (event : Event) => {
     event.preventDefault()
-    try {
-      const response = await axios.post('https://recrutamento.molde.me/location', { x: x_coords.value, y: y_coords.value }, {
-        headers : {
-          Authorization: route.query.auth as string
-        }
-      });
-      
-      if(response.status == 200) {
-        successMessage.value = `Coordenada (${x_coords.value}, ${y_coords.value}) cadastrada!`
-        x_coords.value = 0
-        y_coords.value = 0
-
-        setTimeout(() => {
-          successMessage.value = ""
-        }, 3000)
-      }
-    } catch(error : any) {
-      if(error.response) {
-        const response = error.response
-        if(response.status == 400) {
-          coordsMessage.value = "Coordenadas devem ser entre 0 e 1000"
-        }
-        else if(response.status == 401) {
-          router.replace({
-            name : 'login',
-            query : {
-              next: 'dashboard',
-            }
-          })
-        }
-      }
-      else if (error.request) {
-      }
-      else {
-      }
-    }
+    dashboardController.add_coordinate(x_coords.value, y_coords.value)
   }
 </script>
 
