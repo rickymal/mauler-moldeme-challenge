@@ -1,10 +1,11 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import { useRouter } from 'vue-router'
+  import { onBeforeMount, onMounted, ref } from 'vue'
+  import { useRouter, useRoute } from 'vue-router'
   import MoldemeService from '../services/MoldemeService'
   import UserController from '../controllers/UserController'
 
   const router = useRouter()
+  const route = useRoute()
   const email = ref('henriquemauler@gmail.com')
   const password = ref('052NEGk=')
   const errorMessage = ref('')
@@ -12,22 +13,39 @@
   // Se comporta como um controller também, porém irei específica o controller para aplicar liskov e inversão de controle (p/ SOLID)
   const submitForm = async (e: Event) => {
     e.preventDefault()
-    errorMessage.value = ""
     const apiService = new MoldemeService('https://recrutamento.molde.me/login');
     const userController = new UserController(apiService)
     
+    const next_router = route.query.next as string
+    
+    if(!next_router) {
+      errorMessage.value = ""
+    }
+
+
     userController.login(email.value, password.value).then(user_auth => {
       router.push({
-        name: 'dashboard',
+        name: next_router || 'dashboard',
         query : { auth: user_auth.auth, name: user_auth.name},
       })
 
       // A aprimorar: Um tratamento genérico como esse não permite verificar se o erro foi de login, senha ou mesmo um erro interno na api (status 500)
     }).catch(error => {      
+      console.log("DASHBOARD")
       errorMessage.value = error.message
       console.error(error)
     })
   }
+
+  onMounted(() => {
+    if(route.query.next) {
+      errorMessage.value = "Ops! Parece que o seu token expirou. Por favor, faça o login novamente"
+    }
+
+    onMounted(() => {
+      console.log("MONTANDO O LOGIN")
+    })
+  })
 </script>
 
 <style> 
