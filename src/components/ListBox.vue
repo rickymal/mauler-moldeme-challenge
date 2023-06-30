@@ -1,27 +1,49 @@
 <script setup lang="ts">
   import axios, { AxiosHeaders } from 'axios'
-  import { ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { onBeforeMount, ref } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import { onMounted } from 'vue';
   
   const route = useRoute()
+  const router = useRouter()
   let page = 1
   let limit = 2
   let pages_info = new Map<string, number>()
   let pages_cache = new Map<number, {id : number, x : number, y : number, created_at : string, updated_at : string}>()
   let coordinates = ref({ data: [] });
+  
   pages_info.set('pages', Number.POSITIVE_INFINITY)
 
   const deleteCoords = async (id : number) => {
-    const response = await axios.delete(`https://recrutamento.molde.me/location/${id}`, {
-      headers : {
-        Authorization: route.query.auth as string
-      }
-    })
+    try {
+      const response = await axios.delete(`https://recrutamento.molde.me/location/${id}`, {
+        headers : {
+          Authorization: route.query.auth as string
+        }
+      })
 
-    if(response.status == 200) {
-      // coordinates.value.data = coordinates.value.data.filter(e => e.id != id)
-      paginate_location(0)
+      if(response.status == 200) {
+        // coordinates.value.data = coordinates.value.data.filter(e => e.id != id)
+        paginate_location(0)
+      }
+    } catch (error : any) {
+      if(error.response) {
+        const response = error.response
+        if(response.status == 401) {
+          router.replace({
+            name : 'login',
+            query : {
+              next: 'dashboard',
+            }
+          })
+        }
+      }
+      else if (error.request) {
+        console.error(error.request)
+      }
+      else {
+        console.error(error)
+      }
     }
   }
 
@@ -33,21 +55,44 @@
     }
     
     // casting necessário porque o typescript não enxerga que só será obtido o pages caso exista devido ao 'if'
-    if(page > (pages_info.get('pages') as number)) {
+    else if(page > (pages_info.get('pages') as number)) {
       page = pages_info.get('pages') as number
       return
     }
 
-    const response = await axios.get('https://recrutamento.molde.me/location', {
-      headers : {
-        Authorization: route.query.auth as string
-      },
-      params : { limit, page }
-    })
-
-    pages_info.set('pages', response.data.pages)
-    coordinates.value = response.data.data
+    try {
+      const response = await axios.get('https://recrutamento.molde.me/location', {
+        headers : {
+          Authorization: route.query.auth as string
+        },
+        params : { limit, page }
+      });
+      
+      if(response.status == 200) {
+        pages_info.set('pages', response.data.pages)
+        coordinates.value = response.data.data
+      }
+    } catch(error : any) {
+      if(error.response) {
+        const response = error.response
+        if(response.status == 401) {
+          router.replace({
+            name : 'login',
+            query : {
+              next: 'dashboard',
+            }
+          })
+        }
+      }
+      else if (error.request) {
+        console.error(error.request)
+      }
+      else {
+        console.error(error)
+      }
+    }
   }
+
 
   onMounted(async () => {
     await paginate_location(0);
@@ -61,8 +106,8 @@
         <div class = 'flex justify-left'>
           <h2>(x: {{ coordinate.x }}, y: {{ coordinate.y }})</h2>
         </div>
-        <div class = 'flex justify-right'>
-          <button class="bg-blue-500 rounded px-2 py-4 text-white" @click="() => deleteCoords(coordinate.id)">
+        <div class = 'flex flex-row justify-right'>
+          <button class="bg-blue-500 rounded px-2 py-4 text-white ml-2" @click="() => deleteCoords(coordinate.id)">
             Apagar coordenada
           </button>
         </div>

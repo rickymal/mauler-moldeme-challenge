@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import axios from 'axios'
   import { ref, type Ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { onMounted } from 'vue';
 
   const x_coords : Ref<number> = ref(0)
@@ -10,7 +10,7 @@
   let successMessage = ref("")
   let coordsMessage = ref("")
   const route = useRoute()
-
+  const router = useRouter()
   onMounted(() => {
     successMessage.value = "Insira os valores de 'x' e 'y'"
   })
@@ -38,6 +38,14 @@
         const response = error.response
         if(response.status == 400) {
           coordsMessage.value = "Coordenadas devem ser entre 0 e 1000"
+        }
+        else if(response.status == 401) {
+          router.replace({
+            name : 'login',
+            query : {
+              next: 'dashboard',
+            }
+          })
         }
       }
       else if (error.request) {
