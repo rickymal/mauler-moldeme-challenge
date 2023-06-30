@@ -9,10 +9,12 @@ export default class MoldemeService implements IApiService {
   }
 
   async login(email: string, password: string): Promise<{status : number, data: { auth_token : string, user : {name : string}}}> {
-    return await axios.post(this.url, { email, password }, {
+    const endpoint = 'login'
+    return await axios.post(`${this.url}/${endpoint}`, { email, password }, {
       headers: {
         'Content-Type': 'application/json'
       }
     })
   }
+
 }

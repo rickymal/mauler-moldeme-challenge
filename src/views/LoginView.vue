@@ -10,10 +10,10 @@
   const password = ref('052NEGk=')
   const errorMessage = ref('')
 
-  // Se comporta como um controller também, porém irei específica o controller para aplicar liskov e inversão de controle (p/ SOLID)
+  // Se comporta como um controller também, porém irei específica o controller para apresentar inversão de controle
   const submitForm = async (e: Event) => {
     e.preventDefault()
-    const apiService = new MoldemeService('https://recrutamento.molde.me/login');
+    const apiService = new MoldemeService('https://recrutamento.molde.me');
     const userController = new UserController(apiService)
     
     const next_router = route.query.next as string
@@ -21,7 +21,6 @@
     if(!next_router) {
       errorMessage.value = ""
     }
-
 
     userController.login(email.value, password.value).then(user_auth => {
       router.push({
@@ -31,9 +30,7 @@
 
       // A aprimorar: Um tratamento genérico como esse não permite verificar se o erro foi de login, senha ou mesmo um erro interno na api (status 500)
     }).catch(error => {      
-      console.log("DASHBOARD")
       errorMessage.value = error.message
-      console.error(error)
     })
   }
 
@@ -41,10 +38,6 @@
     if(route.query.next) {
       errorMessage.value = "Ops! Parece que o seu token expirou. Por favor, faça o login novamente"
     }
-
-    onMounted(() => {
-      console.log("MONTANDO O LOGIN")
-    })
   })
 </script>
 
