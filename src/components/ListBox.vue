@@ -32,7 +32,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col justify-center">
+  <div class="flex flex-col justify-center mb-3 mt-3">
     <ul v-if="coordinates" role='list' class="divide-y divide-gray-100">
       <li v-for="coordinate in coordinates" :key="coordinate.id" class="flex justify-between gap-x-6 py-5">
         <div class = 'flex justify-left'>

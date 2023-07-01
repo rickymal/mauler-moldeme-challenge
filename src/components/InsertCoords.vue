@@ -31,7 +31,6 @@
   }
 
   const onCoordsUpdated = (coords) => {
-    console.log({ucoords : coords})
     coordsMessage.value = ""
     const lastMesssage = successMessage.value
     successMessage.value = `Coordenada (${coords.x_axis}, ${coords.y_axis}) cadastrada!`

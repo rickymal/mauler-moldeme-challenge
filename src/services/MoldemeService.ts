@@ -41,4 +41,12 @@ export default class MoldemeService implements IApiService {
       params : { limit, page }
     })
   }
+
+  async get_all_coordinates(auth : string) {
+    return await axios.get('https://recrutamento.molde.me/location', {
+      headers : {
+        Authorization: auth
+      }
+    })
+  }
 }
