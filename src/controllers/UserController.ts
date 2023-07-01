@@ -4,10 +4,6 @@ export default class UserController {
   constructor(private service: IApiService) { }
   async login(email: string, password: string): Promise<{ auth: string, name: string }> {
 
-    return {
-      auth: "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxMiwiZnVsbCI6ZmFsc2UsImV4cCI6MTY4ODE3MDAwMH0.klC22hND4QtvSm7b5_wY-KFYsYXmqRMNp-UPS0xAIJs",
-      name: "Henrique Mauler"
-    }
 
     const response = await this.service.login(email, password)
 
