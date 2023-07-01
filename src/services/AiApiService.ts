@@ -1,8 +1,7 @@
-import IIApiService from "./IIApiService";
+import IAiApiService from "./IAiApiService";
+import BaseApiService from './BaseApiService'
 
-export default class BioApi implements IIApiService {
-  constructor() {
-  }
+export default class AiApiService extends BaseApiService implements IAiApiService {
 
   async perform(coords: Array<{ x: number, y: number }>, training_time : number, iteration_time : number) {
     return {

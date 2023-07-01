@@ -1,7 +1,9 @@
 import { ref } from "vue";
-import type IApiService from "../services/IApiService";
+import type IMoldemeService from "../services/IMoldemeService";
 import { urlToHttpOptions } from "url";
-export default class DashboardController {
+import BaseController from "./BaseController";
+import ControllerCallbacks from '../utils/ControllerCallbacks'
+export default class DashboardController extends BaseController {
   limit: number;
   page: number;
   route: any;
@@ -9,20 +11,22 @@ export default class DashboardController {
   pages_cache: Map<number, { id: number; x: number; y: number; created_at: string; updated_at: string; }>;
   coordinates: any;
 
-  cbs: DashboardControllerCallbacks
+  cbs: ControllerCallbacks
   auth: string;
 
-  constructor(private service: IApiService, auth: string, cbs?: DashboardControllerCallbacks) {
+  constructor(private service: IMoldemeService, auth: string, cbs?: ControllerCallbacks) {
+    super()
     this.page = 1
     this.limit = 2
     this.auth = auth
     this.pages_info = new Map<string, number>()
     this.pages_cache = new Map<number, { id: number, x: number, y: number, created_at: string, updated_at: string }>()
-
     this.pages_info.set('pages', Number.POSITIVE_INFINITY)
-
     this.cbs = cbs || {}
+  }
 
+  onUnauthorizedRequestException(error) {
+    this.cbs.redirectPage('login', 'dashboard')
   }
 
   using_first_page() {
@@ -43,7 +47,6 @@ export default class DashboardController {
       return null
     }
 
-
     try {
       const response = await this.service.get_coordinates_by_page(this.auth, this.page, this.limit)
       if (response.status == 200) {
@@ -51,17 +54,7 @@ export default class DashboardController {
         this.cbs.switchPage(response.data)
       }
     } catch (error: any) {
-      if (error.response) {
-        const response = error.response
-        if (response.status == 401) {
-          this.cbs.redirectPage()
-          // Preciso mover para a tela de login :/
-        }
-      }
-      else if (error.request) {
-      }
-      else {
-      }
+      this.handleControllerError(error)
     }
 
   }
@@ -75,19 +68,7 @@ export default class DashboardController {
         this.cbs.onCoordsUpdated({ x_axis, y_axis })
       }
     } catch (error: any) {
-      if (error.response) {
-        const response = error.response
-        if (response.status == 400) {
-          this.cbs.onUpdateCoordsFailed(response.data, { x_axis, y_axis })
-        }
-        else if (response.status == 401) {
-          this.cbs.redirectPage()
-        }
-      }
-      else if (error.request) {
-      }
-      else {
-      }
+      this.handleControllerError(error)
     }
   }
 
@@ -100,17 +81,7 @@ export default class DashboardController {
         this.paginate_data(0)
       }
     } catch (error: any) {
-      if (error.response) {
-        const response = error.response
-        if (response.status == 401) {
-          this.redirectPage()
-          // Preciso mover para a tela de login :/
-        }
-      }
-      else if (error.request) {
-      }
-      else {
-      }
+      this.handleControllerError(error)
     }
   }
 }

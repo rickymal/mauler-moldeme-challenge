@@ -1,12 +1,8 @@
 import axios from 'axios';
-import type IApiService from './IApiService'
+import type IMoldemeService from './IMoldemeService'
+import BaseApiService from './BaseApiService'
 
-export default class MoldemeService implements IApiService {
-  url: string;
-
-  constructor(url: string) {
-    this.url = url
-  }
+export default class MoldemeService extends BaseApiService implements IMoldemeService {
 
   async login(email: string, password: string): Promise<{status : number, data: { auth_token : string, user : {name : string}}}> {
     const endpoint = 'login'

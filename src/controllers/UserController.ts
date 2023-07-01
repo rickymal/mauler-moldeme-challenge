@@ -1,7 +1,9 @@
-import type IApiService from "../services/IApiService";
+import type IMoldemeService from "../services/IMoldemeService";
+import BaseController from "./BaseController";
 
-export default class UserController {
-  constructor(private service: IApiService) { }
+export default class UserController extends BaseController {
+  constructor(private service: IMoldemeService) { super() }
+
   async login(email: string, password: string): Promise<{ auth: string, name: string }> {
 
 

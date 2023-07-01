@@ -1,12 +1,23 @@
-import type IApiService from "../services/IApiService";
+import type IMoldemeService from "../services/IMoldemeService";
+import {BadRequestException, UnauthorizedException, InternalServerErrorException} from '../errors/errors.ts'
+import BaseController from './BaseController'
 
-export default class PerformController {
+export default class PerformController extends BaseController {
   auth: string;
-  cbs: DashboardControllerCallbacks;
+  cbs: ControllerCallbacks;
 
-  constructor(private moldeme_service: IApiService, private ia_service : IIApiService,  auth : string, cbs : DashboardControllerCallbacks) {
+  constructor(private moldeme_service: IMoldemeService, private ia_service : IAiApiService,  auth : string, cbs : ControllerCallbacks) {
+    super()
     this.auth = auth
     this.cbs = cbs
+  }
+
+  onBadRequestException(error) {
+    this.cbs.onUpdateCoordsFailed(response.data)
+  }
+
+  onUnauthorizedRequestException(error) {
+    this.cbs.redirectPage('login','perform')
   }
 
   async get_all_coordinates() {    
@@ -16,21 +27,8 @@ export default class PerformController {
         return response.data.data
       }
     } catch (error: any) {
-      if (error.response) {
-        const response = error.response
-        if (response.status == 400) {
-          this.cbs.onUpdateCoordsFailed(response.data, { x_axis, y_axis })
-        }
-        else if (response.status == 401) {
-          this.cbs.redirectPage('login','perform')
-        }
-      }
-      else if (error.response) {
-      }
-      else {
-      }
+      this.handleControllerError(error)
     }
-
     return null
   }
   
@@ -51,19 +49,7 @@ export default class PerformController {
         }, 5000);
       }
     } catch (error: any) {
-      if (error.response) {
-        const response = error.response
-        if (response.status == 400) {
-          this.cbs.onUpdateCoordsFailed(response.data, { x_axis, y_axis })
-        }
-        else if (response.status == 401) {
-          this.cbs.redirectPage()
-        }
-      }
-      else if (error.response) {
-      }
-      else {
-      }
+      this.handleControllerError(error)
     } 
     return null
   }

@@ -15,7 +15,6 @@
     router.replace({ name, query : { next }})
   }
   
-
   const switchPage = async (coords: { data: Array<any> }) => {
   
     coordinates.value = coords.data
