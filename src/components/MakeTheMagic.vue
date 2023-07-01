@@ -21,7 +21,7 @@
   }
 
   const on_data_performing = (coords, metadata) => {
-    message.value = `processando ${coords.length} coordenadas.. aguarde ${metadata}`
+    message.value = `processando ${coords.length} coordenadas.. aguarde`
   }
 
   const redirectPage = async (name = 'login', next = 'dashboard') => {
