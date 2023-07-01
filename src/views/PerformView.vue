@@ -3,7 +3,6 @@
   import MakeTheMagic from '../components/MakeTheMagic.vue'
 </script>
 
-
 <template>
   <main>
     <ListBox/>

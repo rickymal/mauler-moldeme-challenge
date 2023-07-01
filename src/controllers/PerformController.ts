@@ -34,8 +34,7 @@ export default class PerformController {
     return null
   }
   
-
-  async find_good_path() {   
+  async find_good_path(training_time, iteration_time) {   
     const coords = await this.get_all_coordinates()
 
     if(!coords) {
@@ -43,12 +42,12 @@ export default class PerformController {
     }
 
     try {
-      this.cbs.on_data_performing(coords)
-      const response = await this.ia_service.perform(coords)
+      this.cbs.on_data_performing(coords, {training_time, iteration_time})
+      const response = await this.ia_service.perform(coords, training_time, iteration_time)
       
       if (response.status == 200) {
         setTimeout(() => {
-          this.cbs.on_data_performed(response.data.path_choosed)
+          this.cbs.on_data_performed(response.data)
         }, 5000);
       }
     } catch (error: any) {
