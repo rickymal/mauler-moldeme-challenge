@@ -26,7 +26,7 @@
   const dashboardController = new DashboardController(apiService, route.query.auth as string, {redirectPage, switchPage})
   
   onMounted(async () => {
-    await dashboardController.paginate_data(0);
+    await dashboardController.paginateData(0);
   });
 </script>
 
@@ -45,8 +45,8 @@
       </li>
     </ul>
     <div class="flex justify-center">
-      <button :disabled="dashboardController.using_first_page()" @click="() => dashboardController.paginate_data(-1)" class="bg-blue-500 text-white py-2 px-4 rounded mr-2">Página anterior</button>
-      <button :disabled="dashboardController.using_last_page()" @click="() => dashboardController.paginate_data(+1)" class="bg-blue-500 text-white py-2 px-4 rounded ml-2">Próxima página</button>
+      <button :disabled="dashboardController.using_first_page()" @click="() => dashboardController.paginateData(-1)" class="bg-blue-500 text-white py-2 px-4 rounded mr-2">Página anterior</button>
+      <button :disabled="dashboardController.using_last_page()" @click="() => dashboardController.paginateData(+1)" class="bg-blue-500 text-white py-2 px-4 rounded ml-2">Próxima página</button>
     </div>
   </div>
 </template>

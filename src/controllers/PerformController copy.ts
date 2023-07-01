@@ -5,7 +5,7 @@ export default class PerformController {
   auth: string;
   cbs: ControllerCallbacks;
 
-  constructor(private moldeme_service: IApiService, private ia_service: IAiApiService, auth: string, cbs: ControllerCallbacks) {
+  constructor(private moldemeService: IApiService, private iaService: IAiApiService, auth: string, cbs: ControllerCallbacks) {
     this.auth = auth
     this.cbs = cbs
   }
@@ -22,9 +22,9 @@ export default class PerformController {
     }
   }
 
-  async get_all_coordinates() {
+  async getAllCoordinates() {
     try {
-      const response = await this.moldeme_service.get_all_coordinates(this.auth)
+      const response = await this.moldemeService.getAllCoordinates(this.auth)
       if (response.status == 200) {
         return response.data.data
       }
@@ -35,20 +35,20 @@ export default class PerformController {
     return null
   }
 
-  async find_good_path(training_time, iteration_time) {
+  async findGoodPath(trainingTime, iterationTime) {
     try {
-      const coords = await this.get_all_coordinates()
+      const coords = await this.getAllCoordinates()
 
       if (!coords) {
         return null
       }
 
-      this.cbs.on_data_performing(coords, { training_time, iteration_time })
-      const response = await this.ia_service.perform(coords, training_time, iteration_time)
+      this.cbs.onDataPerforming(coords, { trainingTime, iterationTime })
+      const response = await this.iaService.perform(coords, trainingTime, iterationTime)
 
       if (response.status == 200) {
         setTimeout(() => {
-          this.cbs.on_data_performed(response.data)
+          this.cbs.onDataPerformed(response.data)
         }, 5000);
       }
     } catch (error: any) {

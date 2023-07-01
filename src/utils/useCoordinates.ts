@@ -16,9 +16,9 @@ function useCoordinates() {
     coordinates.value = response.data.data;
   };
 
-  const addCoordinates = async (x_coords: number, y_coords: number) => {
+  const addCoordinates = async (xCoords: number, yCoords: number) => {
     // API call to add the coordinates...
-    await axios.post('https://recrutamento.molde.me/location', { x: x_coords, y: y_coords }, {
+    await axios.post('https://recrutamento.molde.me/location', { x: xCoords, y: yCoords }, {
       headers : {
         Authorization: route.query.auth as string
       }

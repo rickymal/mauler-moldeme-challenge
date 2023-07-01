@@ -6,8 +6,8 @@
   import MoldemeService from '@/services/MoldemeService';
   import DashboardController from '../controllers/DashboardController'
 
-  const x_coords : Ref<number> = ref(0)
-  const y_coords : Ref<number> = ref(0)
+  const xCoords : Ref<number> = ref(0)
+  const yCoords : Ref<number> = ref(0)
   let errorMessage = ref("")
   let successMessage = ref("")
   let coordsMessage = ref("")
@@ -15,10 +15,10 @@
   const auth = route.query.auth
   const router = useRouter()
   
-  const get_coordinates = () => {
+  const getCoordinates = () => {
     return {
-      x: x_coords.value,
-      y: y_coords.value,
+      x: xCoords.value,
+      y: yCoords.value,
     }
   }
 
@@ -34,8 +34,8 @@
     coordsMessage.value = ""
     const lastMesssage = successMessage.value
     successMessage.value = `Coordenada (${coords.x_axis}, ${coords.y_axis}) cadastrada!`
-    x_coords.value = 0
-    y_coords.value = 0
+    xCoords.value = 0
+    yCoords.value = 0
 
     setTimeout(() => {
       successMessage.value = lastMesssage
@@ -44,32 +44,32 @@
 
 
   const apiService = new MoldemeService()
-  const dashboardController = new DashboardController(apiService, auth, {onCoordsUpdated, get_coordinates, redirectPage, onUpdateCoordsFailed})
+  const dashboardController = new DashboardController(apiService, auth, {onCoordsUpdated, getCoordinates, redirectPage, onUpdateCoordsFailed})
 
   onMounted(() => {
     successMessage.value = "Insira os valores de 'x' e 'y'"
   })
 
-  const submitCoordinates = async (event : Event) => {
+  const submit_coordinates = async (event : Event) => {
     event.preventDefault()
-    dashboardController.add_coordinate(x_coords.value, y_coords.value)
+    dashboardController.addCoordinate(xCoords.value, yCoords.value)
   }
 </script>
 
 <template>
   <div class = 'flex justify-center'>
-    <form @submit="submitCoordinates" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form @submit="submit_coordinates" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
           eixo 'x'
         </label>
-        <input v-model="x_coords" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" name="uname" placeholder="" required>
+        <input v-model="xCoords" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" name="uname" placeholder="" required>
       </div>
       <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
           eixo 'y'
         </label>
-        <input v-model="y_coords" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" name="uname" placeholder="" required>
+        <input v-model="yCoords" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" name="uname" placeholder="" required>
       </div>
       <div v-if="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
         <span class="block sm:inline">{{ errorMessage }}</span>
