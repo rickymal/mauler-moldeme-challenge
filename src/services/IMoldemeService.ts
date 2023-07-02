@@ -5,5 +5,5 @@ export default interface IMoldemeService {
   deleteCoordinates(auth : string, id : string) : Promise<BaseRequestStructure>
   addCoordinates(auth : string, x_axis : number, y_axis : number) : Promise<Coordinates>
   getCoordinatesByPage(auth : string, page : number, limit : number) : Promise<CoordinatesPage>
-  getAllCoordinates(auth : string) : Promise<CoordinatesPage>
+  getAllCoordinates(auth : string) : Promise<{status : number, data : {data : CoordinatesPage}}>
 }

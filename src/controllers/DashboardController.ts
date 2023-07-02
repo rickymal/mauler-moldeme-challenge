@@ -1,9 +1,9 @@
 import type IMoldemeService from "../services/IMoldemeService";
 import BaseController from "./BaseController";
 import type ControllerCallbacks from '../utils/ControllerCallbacks'
-import type GenericError from "@/types/GenericError";
+import type ResponseError from '../types/GenericError'
 
-export default class dashboardController extends BaseController {
+export default class DashboardController extends BaseController {
   limit: number;
   page: number;
   route: any;
@@ -25,13 +25,13 @@ export default class dashboardController extends BaseController {
     this.cbs = cbs || {}
   }
 
-  onUnauthorizedRequestException(error: GenericError) {
+  onUnauthorizedRequestException(error: ResponseError) {
     if (this.cbs.redirectPage) {
       this.cbs.redirectPage('login', 'dashboard')
     }
   }
 
-  onBadRequestException(error: GenericError): void {
+  onBadRequestException(error: ResponseError): void {
     if (this.cbs.onUpdateCoordsFailed) {
       this.cbs.onUpdateCoordsFailed("Coordenadas devem ser entre 0 e 1000")
     }
@@ -63,8 +63,10 @@ export default class dashboardController extends BaseController {
           this.cbs.switchPage(response.data)
         }
       }
+      return response
     } catch (error: any) {
       this.handleControllerError(error)
+      return error
     }
   }
 
@@ -77,20 +79,23 @@ export default class dashboardController extends BaseController {
           this.cbs.onCoordsUpdated({ x_axis, y_axis })
         }
       }
+      return response
     } catch (error: any) {
       this.handleControllerError(error)
+      return error
     }
   }
 
   async deleteCoordinate(id: number | string) {
     try {
       const response = await this.service.deleteCoordinates(this.auth, id as string)
-
       if (response.status == 200) {
         this.paginateData(0)
       }
+      return response
     } catch (error: any) {
       this.handleControllerError(error)
+      return error
     }
   }
 }

@@ -49,4 +49,5 @@ onMounted(async () => {
       <button :disabled="dashboardController.using_last_page()" @click="() => dashboardController.paginateData(+1)"
         class="bg-blue-500 text-white py-2 px-4 rounded ml-2">Próxima página</button>
     </div>
-  </div></template>
+  </div>
+</template>
