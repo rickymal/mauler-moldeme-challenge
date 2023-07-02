@@ -1,8 +1,8 @@
-import { ref } from "vue";
 import type IMoldemeService from "../services/IMoldemeService";
-import { urlToHttpOptions } from "url";
 import BaseController from "./BaseController";
-import ControllerCallbacks from '../utils/ControllerCallbacks'
+import type ControllerCallbacks from '../utils/ControllerCallbacks'
+import type GenericError from "@/types/GenericError";
+
 export default class dashboardController extends BaseController {
   limit: number;
   page: number;
@@ -25,8 +25,16 @@ export default class dashboardController extends BaseController {
     this.cbs = cbs || {}
   }
 
-  onUnauthorizedRequestException(error) {
-    this.cbs.redirectPage('login', 'dashboard')
+  onUnauthorizedRequestException(error: GenericError) {
+    if (this.cbs.redirectPage) {
+      this.cbs.redirectPage('login', 'dashboard')
+    }
+  }
+
+  onBadRequestException(error: GenericError): void {
+    if (this.cbs.onUpdateCoordsFailed) {
+      this.cbs.onUpdateCoordsFailed("Coordenadas devem ser entre 0 e 1000")
+    }
   }
 
   using_first_page() {
@@ -51,31 +59,32 @@ export default class dashboardController extends BaseController {
       const response = await this.service.getCoordinatesByPage(this.auth, this.page, this.limit)
       if (response.status == 200) {
         this.pagesInfo.set('pages', response.data.pages)
-        this.cbs.switchPage(response.data)
+        if (this.cbs.switchPage) {
+          this.cbs.switchPage(response.data)
+        }
       }
     } catch (error: any) {
       this.handleControllerError(error)
     }
-
   }
 
   async addCoordinate(x_axis: number, y_axis: number) {
-
     try {
       const response = await this.service.addCoordinates(this.auth, x_axis, y_axis)
 
       if (response.status == 200) {
-        this.cbs.onCoordsUpdated({ x_axis, y_axis })
+        if (this.cbs.onCoordsUpdated) {
+          this.cbs.onCoordsUpdated({ x_axis, y_axis })
+        }
       }
     } catch (error: any) {
       this.handleControllerError(error)
     }
   }
 
-
-  async delete_coordinate(id: number) {
+  async deleteCoordinate(id: number | string) {
     try {
-      const response = await this.service.deleteCoordinates(this.auth, id)
+      const response = await this.service.deleteCoordinates(this.auth, id as string)
 
       if (response.status == 200) {
         this.paginateData(0)

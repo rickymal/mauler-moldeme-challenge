@@ -4,23 +4,24 @@ import { useRoute, useRouter } from 'vue-router';
 import MoldemeService from '@/services/MoldemeService';
 import AiApiService from '@/services/AiApiService';
 import PerformController from '../controllers/PerformController'
+import type { CoordsType } from '@/types/Request';
 const route = useRoute()
 const router = useRouter()
 const message = ref('')
 const moldemeService = new MoldemeService('https://recrutamento.molde.me');
-const aiApiService = new AiApiService()
-const perfomedCoords = ref([])
+const aiApiService = new AiApiService('')
+const perfomedCoords: Ref<Array<{ x: number, y: number, id: number }>> = ref(new Array<{ x: number, y: number, id: number }>());
 const totalDistance = ref('')
 const trainingTime = ref('50')
 const iterationTime = ref('50')
 
-const onDataPerformed = (result: Array<{ x: number, y: number }>) => {
+const onDataPerformed = (result: { pathChoosed: Array<{ x: number, y: number }>, length: string | number }) => {
   message.value = ``
   perfomedCoords.value = result.pathChoosed.map((element, idx) => ({ id: idx, ...element }))
-  totalDistance.value = result.length
+  totalDistance.value = result.length as string
 }
 
-const onDataPerforming = (coords, metadata) => {
+const onDataPerforming = (coords: Array<CoordsType>, params: { trainingTime: string, iterationTime: string }) => {
   message.value = `processando ${coords.length} coordenadas.. aguarde`
 }
 
@@ -35,10 +36,13 @@ const makePerform = async (e: Event) => {
   performController.findGoodPath(trainingTime.value, iterationTime.value)
 }
 
+
+const preventDefaultAction = (e: Event) => { e.preventDefault() }
+
 </script>
 
 <template>
-  <form @submit="submitForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+  <form @submit="preventDefaultAction" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
     <div class="mb-4">
       <label class="block text-gray-700 text-sm font-bold mb-2" for="trainingTime">
         Tempo máximo de treinamento (em segundos)

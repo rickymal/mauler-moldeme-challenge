@@ -1,9 +1,9 @@
-import IAiApiService from "./IAiApiService";
+import type IAiApiService from "./IAiApiService";
 import BaseApiService from './BaseApiService'
 
 export default class AiApiService extends BaseApiService implements IAiApiService {
 
-  async perform(coords: Array<{ x: number, y: number }>, trainingTime : number, iterationTime : number) {
+  async perform(coords: Array<{ x: number, y: number }>, trainingTime : string, iterationTime : string) {
     return {
       status: 200,
       data: {

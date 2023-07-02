@@ -22,10 +22,12 @@
       errorMessage.value = ""
     }
 
-    userController.login(email.value, password.value).then(user_auth => {
+    userController.login(email.value, password.value).then(response => {
+      const user_auth = response.data.auth_token
+      const user_name = response.data.user.name
       router.push({
         name: next_router || 'dashboard',
-        query : { auth: user_auth.auth, name: user_auth.name},
+        query : { auth: user_auth, name: user_name},
       })
 
       // A aprimorar: Um tratamento genérico como esse não permite verificar se o erro foi de login, senha ou mesmo um erro interno na api (status 500)

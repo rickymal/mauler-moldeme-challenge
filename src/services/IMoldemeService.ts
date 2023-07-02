@@ -1,4 +1,9 @@
+import {type AuthRequest, type BaseRequestStructure, type CoordinatesPage, type Coordinates} from '../types/Request'
+
 export default interface IMoldemeService {
-  deleteCoordinates(auth: any, id: any): { status: number, data: any };
-  login: (username: string, password: string) => {status : number, data: { auth_token : string, user : {name : string}}}
+  login(email: string, password: string): Promise<AuthRequest>
+  deleteCoordinates(auth : string, id : string) : Promise<BaseRequestStructure>
+  addCoordinates(auth : string, x_axis : number, y_axis : number) : Promise<Coordinates>
+  getCoordinatesByPage(auth : string, page : number, limit : number) : Promise<CoordinatesPage>
+  getAllCoordinates(auth : string) : Promise<CoordinatesPage>
 }
