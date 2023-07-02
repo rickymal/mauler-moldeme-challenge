@@ -7,8 +7,6 @@ import { useRoute, useRouter } from 'vue-router';
   const router = useRouter()
 
   const switchToPerform = () => {
-    console.log({query : route.query.auth})
-    
     router.push({
       name: 'perform',
       query : { auth: route.query.auth},

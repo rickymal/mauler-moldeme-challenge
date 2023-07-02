@@ -30,7 +30,6 @@ const onUpdateCoordsFailed = (reason: string) => {
 }
 
 const onCoordsUpdated = (coords: { x_axis: number, y_axis: number }) => {
-  console.log("UPDATINF")
   coordsMessage.value = ""
   const lastMesssage = successMessage.value
   successMessage.value = `Coordenada (${coords.x_axis}, ${coords.y_axis}) cadastrada!`

@@ -1,23 +1,37 @@
 import { BadRequestException, UnauthorizedException, InternalServerErrorException } from '../errors/errors'
 import type ResponseError from "../types/GenericError"
 
+interface ControllerError {
+  status: number;
+  message: string;
+  response?: any
+}
+
 export default abstract class BaseController {
 
-  onBadRequestException(error: ResponseError) {
-    throw new BadRequestException('BAD_REQUEST_EXCEPTION', error.message)
-  }
+  // onBadRequestException(error: ResponseError) {
+  //   throw new BadRequestException('BAD_REQUEST_EXCEPTION', error.message)
+  // }
 
-  onUnauthorizedRequestException(error: ResponseError) {
-    throw new UnauthorizedException('UNAUTHORIZED_REQUEST_EXCEPTION', error.message)
-  }
+  // onUnauthorizedRequestException(error: ResponseError) {
+  //   throw new UnauthorizedException('UNAUTHORIZED_REQUEST_EXCEPTION', error.message)
+  // }
 
-  onInternalServerErrorException(error: ResponseError) {
-    throw new InternalServerErrorException('INTERVAL_SERVER_ERROR_EXCEPTION', error.message)
-  }
+  // onInternalServerErrorException(error: ResponseError) {
+  //   throw new InternalServerErrorException('INTERVAL_SERVER_ERROR_EXCEPTION', error.message)
+  // }
+
+  onBadRequestException(error: ResponseError) {}
+  
+
+  onUnauthorizedRequestException(error: ResponseError) {}
+  
+
+  onInternalServerErrorException(error: ResponseError) {}
+  
 
   handleControllerError(error: any) {
     if (error.response) {
-      console.log({resp : error.response})
       switch (error.response.status) {
         case 400: {
           this.onBadRequestException(error)
