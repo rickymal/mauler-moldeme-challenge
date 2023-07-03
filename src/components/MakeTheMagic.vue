@@ -1,49 +1,89 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import MoldemeService from '@/services/MoldemeService';
-import AiApiService from '@/services/AiApiService';
-import PerformController from '../controllers/PerformController'
-import type { CoordsType } from '@/types/Request';
-const route = useRoute()
-const router = useRouter()
-const moldemeService = new MoldemeService('https://recrutamento.molde.me');
-const aiApiService = new AiApiService('http://127.0.0.1:5000')
-const perfomedCoords: Ref<Array<{ x: number, y: number, id: number }>> = ref(new Array<{ x: number, y: number, id: number }>());
-const totalDistance = ref('')
-const trainingTime = ref('50')
-const iterationTime = ref('50')
-const message = ref('')
+  import { ref, type Ref } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import MoldemeService from '@/services/MoldemeService';
+  import AiApiService from '@/services/AiApiService';
+  import PerformController from '../controllers/PerformController'
+  import type { CoordsType } from '@/types/Request';
+  import Chart from './Chart.vue'; // Caminho para o seu componente de gráfico de linha
 
-const onDataPerformed = (result: { pathChoosed: Array<{ x: number, y: number }>, length: string | number }) => {
-  message.value = ``
-  perfomedCoords.value = result.pathChoosed.map((element, idx) => ({ id: idx, ...element }))
-  totalDistance.value = result.length as string
-}
+  const route = useRoute()
+  const router = useRouter()
+  const moldemeService = new MoldemeService('https://recrutamento.molde.me');
+  const aiApiService = new AiApiService('http://127.0.0.1:5000')
+  const perfomedCoords: Ref<Array<{ x: number, y: number, id: number }>> = ref(new Array<{ x: number, y: number, id: number }>());
+  const totalDistance = ref('')
+  const trainingTime = ref('50')
+  const iterationTime = ref('50')
+  const message = ref('')
+  const graphicConvergence = ref({})
+  const graphicDivergence = ref({})
 
-const onPerformCoordsFailed = (data) => {
-  message.value = data.message
-}
+  //by ChatGPT
+  function getRandomColor() {
+      const r = Math.floor(Math.random() * 256);  // Random entre 0-255
+      const g = Math.floor(Math.random() * 256);  // Random entre 0-255
+      const b = Math.floor(Math.random() * 256);  // Random entre 0-255
+      return 'rgb(' + r + ', ' + g + ', ' + b + ')';  // Retorna uma cor no formato RGB
+  }
 
-const onDataPerforming = (coords: Array<CoordsType>, params: { trainingTime: string, iterationTime: string }) => {
-  message.value = `processando ${coords.length} coordenadas.. aguarde`
-}
-
-const redirectPage = async (name = 'login', next = 'dashboard') => {
-  router.replace({ name, query: { next } })
-}
-
-const performController = new PerformController(moldemeService, aiApiService, route.query.auth as string, { onDataPerforming, onDataPerformed, redirectPage, onPerformCoordsFailed })
-
-const makePerform = async (e: Event) => {
-  e.preventDefault()
-  message.value = ''
-  performController.findGoodPath(trainingTime.value, iterationTime.value)
-}
+  const onDataPerformed = (result: { pathChoosed: Array<{ x: number, y: number }>, length: string | number }) => {
+    message.value = ``
+    perfomedCoords.value = result.pathChoosed.map((coords, idx) => ({ id: idx, x: coords[0], y: coords[1] }))
+    totalDistance.value = result.length as string
 
 
-const preventDefaultAction = (e: Event) => { e.preventDefault() }
+    let x_axis_convergence = Object.keys(Object.entries(result.conv)[0][1])
+    let y_axis_convergence = Object.entries(result.conv).map(element => {
+      return {
+        label: element[0],
+        data : Object.values(element[1]),
+        tension : 0.1,
+        backgroundColor : getRandomColor()
+        // backgroundColor : '#f00979'
+      }
+    })
 
+    graphicConvergence.value = {
+      labels : x_axis_convergence,
+      datasets: y_axis_convergence
+    }
+
+
+    graphicDivergence.value = {
+      labels: Object.keys(result.div['quantidade de rotas divergentes']),
+      datasets: [
+        {
+          label: 'Quantidade de rotas divergentes',
+          backgroundColor: '#f87979',
+          data: Object.values(result.div['quantidade de rotas divergentes'])
+        }
+      ]
+    }
+
+  }
+
+  const onPerformCoordsFailed = (data) => {
+    message.value = data.message
+  }
+
+  const onDataPerforming = (coords: Array<CoordsType>, params: { trainingTime: string, iterationTime: string }) => {
+    message.value = `processando ${coords.data.data.length} coordenadas.. aguarde`
+  }
+
+  const redirectPage = async (name = 'login', next = 'dashboard') => {
+    router.replace({ name, query: { next } })
+  }
+
+  const performController = new PerformController(moldemeService, aiApiService, route.query.auth as string, { onDataPerforming, onDataPerformed, redirectPage, onPerformCoordsFailed })
+
+  const makePerform = async (e: Event) => {
+    e.preventDefault()
+    message.value = ''
+    performController.findGoodPath(trainingTime.value, iterationTime.value)
+  }
+
+  const preventDefaultAction = (e: Event) => { e.preventDefault() }
 </script>
 
 <template>
@@ -87,4 +127,9 @@ const preventDefaultAction = (e: Event) => { e.preventDefault() }
       </tr>
     </tbody>
   </table>
+  <h1>Gráfico de Convergência</h1>
+  <Chart v-if="graphicConvergence" :graphicData="graphicConvergence" />
+
+  <h1>Gráfico de diversidade</h1>
+  <Chart v-if="graphicDivergence" :graphicData="graphicDivergence" />
 </template>
