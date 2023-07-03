@@ -1,5 +1,6 @@
 export interface BaseRequestStructure {
   status: number;
+  message?: string;
 }
 
 export interface CoordsType {

@@ -7,18 +7,22 @@ import PerformController from '../controllers/PerformController'
 import type { CoordsType } from '@/types/Request';
 const route = useRoute()
 const router = useRouter()
-const message = ref('')
 const moldemeService = new MoldemeService('https://recrutamento.molde.me');
-const aiApiService = new AiApiService('')
+const aiApiService = new AiApiService('http://127.0.0.1:5000')
 const perfomedCoords: Ref<Array<{ x: number, y: number, id: number }>> = ref(new Array<{ x: number, y: number, id: number }>());
 const totalDistance = ref('')
 const trainingTime = ref('50')
 const iterationTime = ref('50')
+const message = ref('')
 
 const onDataPerformed = (result: { pathChoosed: Array<{ x: number, y: number }>, length: string | number }) => {
   message.value = ``
   perfomedCoords.value = result.pathChoosed.map((element, idx) => ({ id: idx, ...element }))
   totalDistance.value = result.length as string
+}
+
+const onPerformCoordsFailed = (data) => {
+  message.value = data.message
 }
 
 const onDataPerforming = (coords: Array<CoordsType>, params: { trainingTime: string, iterationTime: string }) => {
@@ -29,10 +33,11 @@ const redirectPage = async (name = 'login', next = 'dashboard') => {
   router.replace({ name, query: { next } })
 }
 
-const performController = new PerformController(moldemeService, aiApiService, route.query.auth as string, { onDataPerforming, onDataPerformed, redirectPage })
+const performController = new PerformController(moldemeService, aiApiService, route.query.auth as string, { onDataPerforming, onDataPerformed, redirectPage, onPerformCoordsFailed })
 
 const makePerform = async (e: Event) => {
   e.preventDefault()
+  message.value = ''
   performController.findGoodPath(trainingTime.value, iterationTime.value)
 }
 
@@ -62,7 +67,7 @@ const preventDefaultAction = (e: Event) => { e.preventDefault() }
     <button @click="makePerform" class="bg-blue-500 text-white py-2 px-2 rounded ml-2 mr-2 mu-5 md-2"
       type="submit">Performar resultado</button>
   </form>
-  <div v-if="message" class="bg-blue-100 border border-blue-400 text-blue-700 px-6 py-3 rounded absolute" role="alert">
+  <div v-if="message" class="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded absolute" role="alert">
     <span class="block sm:inline">{{ message }}</span>
   </div>
   <h1 v-if="totalDistance">Distância a ser percorrida : {{ totalDistance }}</h1>
