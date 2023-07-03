@@ -6,8 +6,6 @@ import MoldemeService from "../services/MoldemeService";
 import { expect, test, describe, it, beforeAll, beforeEach } from '@jest/globals';
 require('dotenv').config()
 
-
-// sampleFunction.ts
 export function sampleFunction(x: number, y: number): number {
   return x + y;
 }
@@ -17,7 +15,6 @@ test('adds 1 + 2 to equal 3', () => {
 });
 
 let token = process.env.TOKEN as string
-// let token = ''
 const moldemeService = new MoldemeService('https://recrutamento.molde.me')
 const userController = new UserController(moldemeService)
 
@@ -121,7 +118,7 @@ describe("DashboardController", () => {
 
 describe("PerformController", () => {
   const moldemeService = new MoldemeService('https://recrutamento.molde.me');
-  const aiApiService = new AiApiService('')
+  const aiApiService = new AiApiService('http://127.0.0.1:5000')
   const performController = new PerformController(moldemeService, aiApiService, token, {})
 
   it("Deve obter um json contendo informações sobre as coordenadas", async () => {
@@ -151,9 +148,11 @@ describe("PerformController", () => {
   it("Capaz de utilizar a api para o algoritmo evolucionário e obter os resultados a serem apresentado", async () => {
     const response = await performController.findGoodPath('10', '10')
     expect(response.status).toEqual(200)
-    expect(response.data).toEqual({
-      length: expect.any(Number),
-      pathChoosed: expect.any(Array)
-    })
+    expect(Object.keys(response.data)).toEqual(expect.arrayContaining([
+      'conv',
+      'div',
+      'length',
+      'pathChoosed',
+    ]))
   })
 })

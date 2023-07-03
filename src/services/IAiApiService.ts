@@ -1,5 +1,32 @@
-import { type CoordsResult, type CoordsType } from '@/types/Request'
+import { type Conv, type CoordsResult, type CoordsType, type Div } from '@/types/Request'
 
-export default interface IAiApiService {
-  perform: (coords : {data : {data : Array<CoordsType>}}, trainingTime : string, iterationTime : string) => Promise<CoordsResult>
+export interface SuccessData {
+  length: any; 
+  pathChoosed: any; 
+  conv: Conv; 
+  div: Div;
+}
+
+export interface ErrorData {
+  length: null; 
+  pathChoosed: null; 
+  conv?: Conv; 
+  div?: Div;
+}
+
+interface SuccessResponse {
+  status: number;
+  data: SuccessData;
+  message?: undefined;
+}
+
+interface ErrorResponse {
+  status: number;
+  data: ErrorData;
+  message: string;
+}
+
+
+export interface IAiApiService {
+  perform(coords: Array<{ x: number; y: number; }>, trainingTime: string, iterationTime: string): Promise<SuccessResponse | ErrorResponse>;
 }

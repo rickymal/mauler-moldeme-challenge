@@ -1,7 +1,6 @@
-import type IAiApiService from "./IAiApiService";
+import type {IAiApiService} from "./IAiApiService";
 import BaseApiService from './BaseApiService'
-import { type CoordsType } from "../types/Request";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 export default class AiApiService extends BaseApiService implements IAiApiService {
 

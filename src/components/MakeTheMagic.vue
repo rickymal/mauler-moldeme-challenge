@@ -4,8 +4,9 @@
   import MoldemeService from '@/services/MoldemeService';
   import AiApiService from '@/services/AiApiService';
   import PerformController from '../controllers/PerformController'
-  import type { CoordsType } from '@/types/Request';
+  import type { CoordsType, ModelResult } from '@/types/Request';
   import Chart from './Chart.vue'; // Caminho para o seu componente de gráfico de linha
+  import type ResponseError from '@/types/GenericError';
 
   const route = useRoute()
   const router = useRouter()
@@ -21,13 +22,13 @@
 
   //by ChatGPT
   function getRandomColor() {
-      const r = Math.floor(Math.random() * 256);  // Random entre 0-255
-      const g = Math.floor(Math.random() * 256);  // Random entre 0-255
-      const b = Math.floor(Math.random() * 256);  // Random entre 0-255
-      return 'rgb(' + r + ', ' + g + ', ' + b + ')';  // Retorna uma cor no formato RGB
+    const r = Math.floor(Math.random() * 256);  // Random entre 0-255
+    const g = Math.floor(Math.random() * 256);  // Random entre 0-255
+    const b = Math.floor(Math.random() * 256);  // Random entre 0-255
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')';  // Retorna uma cor no formato RGB
   }
 
-  const onDataPerformed = (result: { pathChoosed: Array<{ x: number, y: number }>, length: string | number }) => {
+  const onDataPerformed = (result: ModelResult) => {
     message.value = ``
     perfomedCoords.value = result.pathChoosed.map((coords, idx) => ({ id: idx, x: coords[0], y: coords[1] }))
     totalDistance.value = result.length as string
@@ -37,18 +38,17 @@
     let y_axis_convergence = Object.entries(result.conv).map(element => {
       return {
         label: element[0],
-        data : Object.values(element[1]),
-        tension : 0.1,
-        backgroundColor : getRandomColor()
+        data: Object.values(element[1]),
+        tension: 0.1,
+        backgroundColor: getRandomColor()
         // backgroundColor : '#f00979'
       }
     })
 
     graphicConvergence.value = {
-      labels : x_axis_convergence,
+      labels: x_axis_convergence,
       datasets: y_axis_convergence
     }
-
 
     graphicDivergence.value = {
       labels: Object.keys(result.div['quantidade de rotas divergentes']),
@@ -60,14 +60,13 @@
         }
       ]
     }
-
   }
 
-  const onPerformCoordsFailed = (data) => {
+  const onPerformCoordsFailed = (data: ResponseError) => {
     message.value = data.message
   }
 
-  const onDataPerforming = (coords: Array<CoordsType>, params: { trainingTime: string, iterationTime: string }) => {
+  const onDataPerforming = (coords: { data: { data: Array<CoordsType> } }, params: { trainingTime: string, iterationTime: string }) => {
     message.value = `processando ${coords.data.data.length} coordenadas.. aguarde`
   }
 

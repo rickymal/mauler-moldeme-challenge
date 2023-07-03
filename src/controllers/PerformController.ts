@@ -1,9 +1,8 @@
 import type IMoldemeService from "../services/IMoldemeService";
-import { BadRequestException, UnauthorizedException, InternalServerErrorException } from '../errors/errors'
 import BaseController from './BaseController'
 import type ControllerCallbacks from '../utils/ControllerCallbacks'
 import type ResponseError from "../types/GenericError";
-import type IAiApiService from '../services/IAiApiService'
+import type { IAiApiService, SuccessData } from '../services/IAiApiService'
 
 export default class PerformController extends BaseController {
   auth: string;
@@ -49,28 +48,28 @@ export default class PerformController extends BaseController {
     const coords = await this.getAllCoordinates()
 
     // Melhorar esses retornos (genérico)
-    if (!coords.data.data) {
-      return null
-    }
-
-    // Melhorar esses retornos (genérico)
     const is_training_value_valid = !trainingTime || this.is_valid_number(parseInt(trainingTime))
     const is_iteration_value_valid = !iterationTime || this.is_valid_number(parseInt(iterationTime))
 
     if (!(is_iteration_value_valid || is_training_value_valid)) {
       return null
     }
+
     try {
       if (this.cbs.onDataPerforming) {
         this.cbs.onDataPerforming(coords, { trainingTime, iterationTime })
       }
-      const response = await this.iaService.perform(coords.data.data.map(el => ([el.x, el.y])), trainingTime, iterationTime)
+      const response = await this.iaService.perform(coords.data.data.map((el: { x: number | string; y: number | string; }) => ([el.x, el.y])), trainingTime, iterationTime)
 
+      // a corrigir
       if (response.status == 200) {
         if (this.cbs.onDataPerformed) {
-          this.cbs.onDataPerformed(response.data)
+          this.cbs.onDataPerformed(response.data as SuccessData)
         }
         return response
+      }
+      else if (response.status == 400) {
+        throw Error("url da api interna inválida")
       }
     } catch (error: any) {
       this.handleControllerError(error)
