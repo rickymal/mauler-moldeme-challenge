@@ -13,6 +13,7 @@ const yCoords: Ref<number> = ref(0)
 let errorMessage = ref("")
 let successMessage = ref("")
 let coordsMessage = ref("")
+
 const route = useRoute()
 const auth = route.query.auth as string
 const router = useRouter()
@@ -73,15 +74,15 @@ const submitCoordinates = async (event: Event) => {
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="username" type="text" name="uname" placeholder="" required>
       </div>
-      <div v-if="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+      <div v-if="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mt-3 mb-3 rounded relative"
         role="alert">
         <span class="block sm:inline">{{ errorMessage }}</span>
       </div>
-      <div v-if="successMessage" class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative"
+      <div v-if="successMessage" class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 mt-3 mb-3 rounded relative"
         role="alert">
         <span class="block sm:inline">{{ successMessage }}</span>
       </div>
-      <div v-if="coordsMessage" class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative"
+      <div v-if="coordsMessage" class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 mt-3 mb-3 rounded relative"
         role="alert">
         <span class="block sm:inline">{{ coordsMessage }}</span>
       </div>

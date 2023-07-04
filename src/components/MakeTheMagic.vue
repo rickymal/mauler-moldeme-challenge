@@ -109,8 +109,8 @@
   <div v-if="message" class="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded absolute" role="alert">
     <span class="block sm:inline">{{ message }}</span>
   </div>
-  <h1 v-if="totalDistance">Distância a ser percorrida : {{ totalDistance }}</h1>
-  <table v-if="perfomedCoords.length" class="border-collapse border border-slate-400 ...">
+  <h1 v-if="totalDistance">Distância a ser percorrida : {{ totalDistance }} U.C</h1>
+  <table v-if="perfomedCoords.length" class="border-collapse border border-slate-400 mb-4 mu-4 ...">
     <thead>
       <tr class="pl-3 pr-3">
         <th class="border border-slate-300 ...">Direção</th>

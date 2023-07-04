@@ -4,7 +4,9 @@ import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
-  <RouterView />
+  <div class="min-w-[600px]">
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>

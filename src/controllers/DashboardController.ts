@@ -17,7 +17,7 @@ export default class DashboardController extends BaseController {
   constructor(private service: IMoldemeService, auth: string, cbs?: ControllerCallbacks) {
     super()
     this.page = 1
-    this.limit = 2
+    this.limit = 5
     this.auth = auth
     this.pagesInfo = new Map<string, number>()
     this.pagesCache = new Map<number, { id: number, x: number, y: number, created_at: string, updated_at: string }>()
