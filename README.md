@@ -1,5 +1,9 @@
 # moldeme
 
+- docker exec -it moldeme_app_node_1 npm run test
+- docker-compose up --build
+
+
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup

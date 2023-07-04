@@ -118,7 +118,7 @@ describe("DashboardController", () => {
 
 describe("PerformController", () => {
   const moldemeService = new MoldemeService('https://recrutamento.molde.me');
-  const aiApiService = new AiApiService('http://127.0.0.1:5000')
+  const aiApiService = new AiApiService('http://app_python:5000')
   const performController = new PerformController(moldemeService, aiApiService, token, {})
 
   it("Deve obter um json contendo informações sobre as coordenadas", async () => {

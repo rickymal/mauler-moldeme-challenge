@@ -11,7 +11,7 @@
   const route = useRoute()
   const router = useRouter()
   const moldemeService = new MoldemeService('https://recrutamento.molde.me');
-  const aiApiService = new AiApiService('http://127.0.0.1:5000')
+  const aiApiService = new AiApiService('/api')
   const perfomedCoords: Ref<Array<{ x: number, y: number, id: number }>> = ref(new Array<{ x: number, y: number, id: number }>());
   const totalDistance = ref('')
   const trainingTime = ref('50')
