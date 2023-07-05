@@ -46,7 +46,7 @@ Caso não funcione, teste:
 docker-compose up --build
 ```
 
-Caso ainda não funcione, verifique alguma incompatibilidade do docker-compose presente em `docker-compose.yaml` ao seu Docker. Possivelmente pode ser problema versão do Docker instalada em sua máquina. Se ocorrer algum erro, você pode alterar a versão no arquivo para a versão suportada pelo seu Docker. (adicionando/alterando o parametro 'version', no docker-compose) exemplo:
+Se ainda assim você encontrar problemas, pode ser que haja uma incompatibilidade entre o arquivo `docker-compose.yaml` e a versão do Docker instalada em seu sistema. É possível que o problema esteja na versão do Docker que você possui. Caso encontre algum erro, você tem a opção de alterar a versão especificada no arquivo para a versão que é suportada pela sua instalação do Docker. Isso pode ser feito modificando o parâmetro 'version' no arquivo docker-compose. Por exemplo:
 
 ```
 version: 3.3
@@ -60,7 +60,7 @@ services:
 
 1. **Acesse a aplicação**
 
-Depois que os contêineres estiverem em execução e as aplicações inicializadas, você pode acessar a aplicação através dos seguintes URLs:
+Depois que os contêineres estiverem em execução e as aplicações inicializadas, você pode acessar a aplicação:
 - [http://localhost:5173](http://localhost:5173)
 - Se você estiver rodando o projeto em um ambiente WSL, pode ser necessário substituir "localhost" pelo endereço IPv4 da sua máquina WSL. Para descobrir isso, abra o prompt de comando ou o PowerShell e digite `ipconfig` para obter o IPv4 da interface de rede.
 
@@ -72,7 +72,7 @@ Para rodar os testes da aplicação, após iniciar o docker e as aplicações, e
 docker exec -it <container-id> npm run test
 ```
 - substituindo `<container-id>` pelo ID do container node
-- Você pode encontrar o ID do contêiner usando o comando `docker ps`. Outra alternativa é subtituir `<container-id>` pelo nome do processo docker. Caso o nome da pasta não tenha sido alterada durante o clone do projeto, o ID do contêiner provavelmente é `mauler-moldeme-challenge_app_node_1`, e o comando ficaria assim:
+- Você pode encontrar o ID do contêiner usando o comando `docker ps`. Outra alternativa é substituir `<container-id>` pelo nome do processo docker. Caso o nome da pasta não tenha sido alterada durante o clone do projeto, o ID do contêiner provavelmente é `mauler-moldeme-challenge_app_node_1`, e o comando ficaria assim:
 
 ```bash
 docker exec -it mauler-moldeme-challenge_app_node_1 npm run test
