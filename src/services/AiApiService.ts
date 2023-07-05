@@ -1,4 +1,4 @@
-import type {IAiApiService} from "./IAiApiService";
+import type {IAiApiService} from "../types/IAiApiService";
 import BaseApiService from './BaseApiService'
 import axios, { AxiosError } from "axios";
 

@@ -1,3 +1,6 @@
+/*
+  Criei para utilizar erros personalizados porém não era necessário o generics
+*/
 type MoldemeNameErrors = 
   | 'BAD_REQUEST_EXCEPTION'
   | 'UNAUTHORIZED_REQUEST_EXCEPTION'

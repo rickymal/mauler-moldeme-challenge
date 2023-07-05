@@ -3,32 +3,49 @@
   import { useRouter, useRoute } from 'vue-router'
   import MoldemeService from '../services/MoldemeService'
   import UserController from '../controllers/UserController'
-
   const router = useRouter()
   const route = useRoute()
-  const email = ref('henriquemauler@gmail.com')
-  const password = ref('052NEGk=')
+  const email = ref('')
+  const password = ref('')
   const errorMessage = ref('')
 
-  // Se comporta como um controller também, porém irei específica o controller para apresentar inversão de controle
+  /*
+    O método submitForm trabalha na regra de negócio, porém é uma regra de negócio
+    que tem acesso direto ao DOM, enquanto o controller é isolado e acessar o 
+    serviço externo.
+
+    Existe duas formas de trabalhar, a primeira é utilizando as promises para separar as 
+    responsabilidades e por meio de callbacks.
+    em UserController aproveitei o conceito e chamádas assíncrona, e no comando 'then'
+    Passando a lógica para acessar o DOM (Virtual DOM na verdade).
+
+    Os outros controllers por sua vez trabalhei 100% com callbacks
+  */
   const submitForm = async (e: Event) => {
     e.preventDefault()
     const apiService = new MoldemeService('https://recrutamento.molde.me');
     const userController = new UserController(apiService)
-    
     const next_router = route.query.next as string
     
     if(!next_router) {
       errorMessage.value = ""
     }
 
+    // [method] utilizando promises
     userController.login(email.value, password.value).then(response => {
       const user_auth = response.data.auth_token
       const user_name = response.data.user.name
-      router.push({
-        name: next_router || 'dashboard',
-        query : { auth: user_auth, name: user_name},
-      })
+      if (next_router) {
+        router.replace({
+          name: next_router ,
+          query : { auth: user_auth, name: user_name},
+        })
+      } else {
+        router.push({
+          name: 'dashboard',
+          query : { auth: user_auth, name: user_name},
+        })
+      }
 
       // A aprimorar: Um tratamento genérico como esse não permite verificar se o erro foi de login, senha ou mesmo um erro interno na api (status 500)
     }).catch(error => {      

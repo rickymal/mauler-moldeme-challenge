@@ -4,9 +4,10 @@
   import MoldemeService from '@/services/MoldemeService';
   import AiApiService from '@/services/AiApiService';
   import PerformController from '../controllers/PerformController'
-  import type { CoordsType, ModelResult } from '@/types/Request';
+  import type { CoordsType, ModelResult } from '@/types/Interfaces';
   import Chart from './Chart.vue'; // Caminho para o seu componente de gráfico de linha
   import type ResponseError from '@/types/GenericError';
+  import useSwitch from '../hooks/useSwitch'
 
   const route = useRoute()
   const router = useRouter()
@@ -32,8 +33,6 @@
     message.value = ``
     perfomedCoords.value = result.pathChoosed.map((coords, idx) => ({ id: idx, x: coords[0], y: coords[1] }))
     totalDistance.value = result.length as string
-
-
     let x_axis_convergence = Object.keys(Object.entries(result.conv)[0][1])
     let y_axis_convergence = Object.entries(result.conv).map(element => {
       return {
@@ -70,9 +69,11 @@
     message.value = `processando ${coords.data.data.length} coordenadas.. aguarde`
   }
 
-  const redirectPage = async (name = 'login', next = 'dashboard') => {
-    router.replace({ name, query: { next } })
-  }
+  // const redirectPage = async (name = 'login', next = 'dashboard') => {
+  //   router.replace({ name, query: { next } })
+  // }
+
+  const {redirectPage} = useSwitch()
 
   const performController = new PerformController(moldemeService, aiApiService, route.query.auth as string, { onDataPerforming, onDataPerformed, redirectPage, onPerformCoordsFailed })
 

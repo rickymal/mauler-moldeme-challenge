@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type IMoldemeService from './IMoldemeService'
+import type IMoldemeService from '../types/IMoldemeService'
 import BaseApiService from './BaseApiService'
 
 export default class MoldemeService extends BaseApiService implements IMoldemeService {

@@ -1,4 +1,4 @@
-import type IMoldemeService from "../services/IMoldemeService";
+import type IMoldemeService from "../types/IMoldemeService";
 import BaseController from "./BaseController";
 import type ControllerCallbacks from '../utils/ControllerCallbacks'
 import type ResponseError from '../types/GenericError'
@@ -10,7 +10,6 @@ export default class DashboardController extends BaseController {
   pagesInfo: Map<string, number>;
   pagesCache: Map<number, { id: number; x: number; y: number; created_at: string; updated_at: string; }>;
   coordinates: any;
-
   cbs: ControllerCallbacks
   auth: string;
 
@@ -47,6 +46,7 @@ export default class DashboardController extends BaseController {
 
   async paginateData(pagination: number) {
     this.page += pagination
+
     if (this.page < 1) {
       this.page = 1
       return null
@@ -73,7 +73,6 @@ export default class DashboardController extends BaseController {
   async addCoordinate(x_axis: number, y_axis: number) {
     try {
       const response = await this.service.addCoordinates(this.auth, x_axis, y_axis)
-
       if (response.status == 200) {
         if (this.cbs.onCoordsUpdated) {
           this.cbs.onCoordsUpdated({ x_axis, y_axis })

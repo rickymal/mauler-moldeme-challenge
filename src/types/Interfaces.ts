@@ -12,7 +12,6 @@ export interface CoordsType {
 
 }
 
-
 export interface ModelResult {
   conv(conv: any): unknown;
   div: any;

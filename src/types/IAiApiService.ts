@@ -1,4 +1,4 @@
-import { type Conv, type CoordsResult, type CoordsType, type Div } from '@/types/Request'
+import { type Conv, type CoordsResult, type CoordsType, type Div } from '@/types/Interfaces'
 
 export interface SuccessData {
   length: any; 

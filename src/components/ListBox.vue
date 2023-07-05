@@ -5,7 +5,7 @@ import { onMounted } from 'vue';
 import MoldemeService from '@/services/MoldemeService';
 import DashboardController from '../controllers/DashboardController'
 import useSwitch from "../hooks/useSwitch"
-import { type CoordsType as Coords } from '@/types/Request';
+import { type CoordsType as Coords } from '@/types/Interfaces';
 
 const route = useRoute()
 const router = useRouter()
@@ -20,6 +20,7 @@ const switchPage = (coords: { data: Array<Coords> }) => {
 
 const onCoordsDeleted = (coords: { x: number, y: number }) => { }
 
+// [method] utilizando callbacks
 const apiService = new MoldemeService('https://recrutamento.molde.me');
 const dashboardController = new DashboardController(apiService, route.query.auth as string, { redirectPage, switchPage })
 

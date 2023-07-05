@@ -1,9 +1,10 @@
-import type IMoldemeService from "../services/IMoldemeService";
+import type IMoldemeService from "../types/IMoldemeService";
 import BaseController from "./BaseController";
-import { type AuthRequest } from '../types/Request'
+
 
 export default class UserController extends BaseController {
   constructor(private service: IMoldemeService) { super() }
+  
   async login(email: string, password: string) {
     try {
       const response = await this.service.login(email, password)

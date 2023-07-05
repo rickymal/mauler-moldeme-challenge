@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import ListBox from '../components/ListBox.vue'
-  import MakeTheMagic from '../components/MakeTheMagic.vue'
+  import Performer from '../components/Performer.vue'
 </script>
 
 <template>
   <main>
     <ListBox/>
-    <MakeTheMagic/>
+    <Performer/>
   </main>
 </template>

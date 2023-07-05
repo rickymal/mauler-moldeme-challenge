@@ -1,50 +1,79 @@
-# moldeme
+# Moldeme - O Desafio de código
 
-- docker exec -it moldeme_app_node_1 npm run test
-- docker-compose up --build
+- Este projeto foi criado como parte de um desafio. O objetivo do projeto é demonstrar o uso de Algoritmo Genético (GA) para resolver o problema do caixeiro viajante.
+- O sistema foi desenvolvido sob o template [Vue 3 + Vite] + [Python + Flask]
+- O projeto em Node.js cuida da interação com o usuário enquanto o projeto em Python é unica e exclusivamente para o algoritmo bioinspirado.
+- O desafio pede para aplicar ao máximo os princípios MVC e SOLID ao projeto, porém há resalvas:
 
+1. Os princípios SOLID não são 100% transponíveis para o Vue.js. Este framework é voltado para criaçãod e interfaces baseando no modelo reativo 
+2. Vue.js opera por design utilizando arquitetura MVVM (Model-View-Model), uma variação do modelo tradicional MVC. Este padrão permite uma separação mais estreita entre a interface de usuário (Camada VIew), do controle da regra de negócio. Por esta razão optei por realizar a separação de duas formas distintas para padronizar na arquitetura MVC:
+   1. Utilizando Promises
+   2. Utilizando Callbacks
+   
+OBS: os diferente métodos foram marcados em comentário. pesquise por `[method]`
 
-This template should help get you started developing with Vue 3 in Vite.
+## Pré-requisitos:
 
-## Recommended IDE Setup
+- Docker
+- Docker-compose
+- WSL2 (recomendado)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Configuração e Instalação
 
-## Type Support for `.vue` Imports in TS
+1. **Clone o repositório**
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
+2. **Crie e configure o arquivo .env**
+- Na pasta raiz do projeto, crie um arquivo chamado `.env`. Este arquivo deve conter as seguintes variáveis de ambiente:
+```bash
+EMAIL='<seu_email>'
+PASSWORD='<sua_senha>'
+TOKEN='<um_token_valido>'
 ```
 
-### Compile and Hot-Reload for Development
+- As variáveis acima correspondem ao e-mail, senha e um token para acessar a API da Moldeme. Esta variável de ambiente não é necessária para o funcionamento do programa, porém deve ser inserida caso se queira executar o testes de integração.
 
-```sh
-npm run dev
+3. **Construa e inicie os contêineres Docker**
+
+Execute o seguinte comando para construir e iniciar os contêineres:
+
+```bash
+docker-compose up
 ```
 
-### Type-Check, Compile and Minify for Production
+Caso não funcione, teste:
 
-```sh
-npm run build
+```bash
+docker-compose up --build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+Caso ainda não funcione, verifique alguma incompatibilidade do docker-compose presente em `docker-compose.yaml` ao seu Docker. Possivelmente pode ser problema versão do Docker instalada em sua máquina. Se ocorrer algum erro, você pode alterar a versão no arquivo para a versão suportada pelo seu Docker. (adicionando/alterando o parametro 'version', no docker-compose) exemplo:
 
-```sh
-npm run test:unit
+```
+version: 3.3
+services:
+  app_python:
+    image: python:3.8.10
+    volumes:
+      - ./src/api:/app
+[...]
+```
+
+1. **Acesse a aplicação**
+
+Depois que os contêineres estiverem em execução e as aplicações inicializadas, você pode acessar a aplicação através dos seguintes URLs:
+- [http://localhost:5173](http://localhost:5173)
+- Se você estiver rodando o projeto em um ambiente WSL, pode ser necessário substituir "localhost" pelo endereço IPv4 da sua máquina WSL. Para descobrir isso, abra o prompt de comando ou o PowerShell e digite `ipconfig` para obter o IPv4 da interface de rede.
+
+## Executando testes
+
+Para rodar os testes da aplicação, após iniciar o docker e as aplicações, execute o seguinte comando: 
+
+```bash
+docker exec -it <container-id> npm run test
+```
+- substituindo `<container-id>` pelo ID do container node
+- Você pode encontrar o ID do contêiner usando o comando `docker ps`. Outra alternativa é subtituir `<container-id>` pelo nome do processo docker. Caso o nome da pasta não tenha sido alterada durante o clone do projeto, o ID do contêiner provavelmente é `mauler-moldeme-challenge_app_node_1`, e o comando ficaria assim:
+
+```bash
+docker exec -it mauler-moldeme-challenge_app_node_1 npm run test
 ```

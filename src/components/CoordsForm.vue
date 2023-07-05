@@ -42,6 +42,7 @@ const onCoordsUpdated = (coords: { x_axis: number, y_axis: number }) => {
   }, 5000)
 }
 
+// [method] utilizando callbacks
 const apiService = new MoldemeService('https://recrutamento.molde.me/location')
 const dashboardController = new DashboardController(apiService, auth, { onCoordsUpdated, getCoordinates, redirectPage, onUpdateCoordsFailed })
 

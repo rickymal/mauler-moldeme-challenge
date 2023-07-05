@@ -1,4 +1,4 @@
-export default class BaseApiService {
+export default abstract class BaseApiService {
   url: string;
   
   constructor(url: string) {

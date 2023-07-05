@@ -1,12 +1,6 @@
 import { BadRequestException, UnauthorizedException, InternalServerErrorException } from '../errors/errors'
 import type ResponseError from "../types/GenericError"
 
-interface ControllerError {
-  status: number;
-  message: string;
-  response?: any
-}
-
 export default abstract class BaseController {
 
   // onBadRequestException(error: ResponseError) {

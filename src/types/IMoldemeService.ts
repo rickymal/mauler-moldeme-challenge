@@ -1,4 +1,4 @@
-import {type AuthRequest, type BaseRequestStructure, type CoordinatesPage, type Coordinates} from '../types/Request'
+import {type AuthRequest, type BaseRequestStructure, type CoordinatesPage, type Coordinates} from './Interfaces'
 
 export default interface IMoldemeService {
   login(email: string, password: string): Promise<AuthRequest>
